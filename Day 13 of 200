@@ -1,0 +1,63 @@
+import math
+import matplotlib.pyplot as plt
+
+# Define the function f(x)
+def fval(x):
+    return 4 * math.sin(x) - math.exp(x)
+
+# Define the derivative f'(x)
+def dfval(x):
+    return 4 * math.cos(x) - math.exp(x)
+
+# Parameters
+TOL = 1e-6
+N = 500
+
+# Initial approximation
+x0 = float(input("Enter the initial approximation: "))
+
+# Store iteration data
+x_values = []
+fx_values = []
+
+print("Iter\t xk\t\t\t f(xk)\t\t\t Error")
+
+xk = x0
+for k in range(1, N + 1):
+    fxk = fval(xk)
+    dfxk = dfval(xk)
+
+    if dfxk == 0:
+        print("Zero derivative encountered. No solution found.")
+        break
+
+    x_next = xk - fxk / dfxk
+    err = abs(x_next - xk) / abs(x_next)
+
+    print(f"{k}\t {xk:.16f}\t {fxk:.16f}\t {err:.12f}")
+
+    # Store for plotting
+    x_values.append(xk)
+    fx_values.append(fxk)
+
+    if err < TOL:
+        print("\nRequired accuracy achieved; Solution is convergent.")
+        break
+
+    xk = x_next
+else:
+    print("\nThe Number of iterations exceeded the maximum limit.")
+
+# Plotting
+x_plot = [i * 0.1 for i in range(-50, 50)]
+y_plot = [fval(x) for x in x_plot]
+
+plt.plot(x_plot, y_plot, label="f(x)", color="blue")
+plt.axhline(0, color='black', linestyle='--', linewidth=1)
+plt.plot(x_values, fx_values, 'ro-', label="Iterations (xk, f(xk))")
+plt.xlabel("x")
+plt.ylabel("f(x)")
+plt.title("Newton-Raphson Method: Root Finding")
+plt.legend()
+plt.grid(True)
+plt.show()
